@@ -1,0 +1,14 @@
+{
+  "name": "imax-bookings-bot",
+  "version": "1.0.0",
+  "description": "Monitor IMAX show bookings on BookMyShow and get email alerts",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "check": "node src/index.js"
+  },
+  "dependencies": {
+    "dotenv": "16.4.7",
+    "nodemailer": "6.9.16"
+  }
+}
