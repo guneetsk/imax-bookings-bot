@@ -1,4 +1,5 @@
 const fs = require('fs');
+const { execFileSync } = require('child_process');
 const { checkAllDates } = require('./checker');
 const { sendAlert } = require('./notifier');
 const config = require('./config');
@@ -21,7 +22,7 @@ async function run() {
   const shows = await checkAllDates();
 
   if (shows.length === 0) {
-    console.log('No IMAX shows found. Will check again later.');
+    console.log(`No IMAX shows found for ${config.target.targetDate}. Will check again later.`);
     return;
   }
 
@@ -60,6 +61,22 @@ async function run() {
 
     saveState(state);
     console.log('Done! State saved.');
+
+    // Disable the workflow — no need to keep checking
+    if (process.env.GITHUB_TOKEN && process.env.GITHUB_REPOSITORY) {
+      const [owner, repo] = process.env.GITHUB_REPOSITORY.split('/');
+      try {
+        execFileSync('curl', [
+          '-s', '-X', 'PUT',
+          '-H', 'Accept: application/vnd.github+json',
+          '-H', `Authorization: Bearer ${process.env.GITHUB_TOKEN}`,
+          `https://api.github.com/repos/${owner}/${repo}/actions/workflows/check.yml/disable`,
+        ], { stdio: 'inherit' });
+        console.log('Workflow disabled — bot will no longer run.');
+      } catch (e) {
+        console.warn('Could not disable workflow (non-fatal):', e.message);
+      }
+    }
   } catch (err) {
     console.error(`Failed to send email: ${err.message}`);
     process.exit(1);

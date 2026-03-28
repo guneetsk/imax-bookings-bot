@@ -76,33 +76,21 @@ async function checkVenueForDate(dateCode) {
 }
 
 async function checkAllDates() {
-  const today = new Date();
-  const allShows = [];
+  const dateCode = config.target.targetDate;
+  console.log(`Checking ${config.target.venueName} for "${config.target.movieName}" IMAX on ${dateCode}...`);
 
-  console.log(`Checking ${config.target.venueName} for "${config.target.movieName}" IMAX...`);
-
-  for (let i = 0; i < config.daysToCheck; i++) {
-    const date = new Date(today);
-    date.setDate(today.getDate() + i);
-    const dateCode = formatDate(date);
-
-    try {
-      const shows = await checkVenueForDate(dateCode);
-      if (shows.length > 0) {
-        console.log(`  [${dateCode}] Found ${shows.length} IMAX show(s)!`);
-        allShows.push(...shows);
-      } else {
-        console.log(`  [${dateCode}] No IMAX shows`);
-      }
-    } catch (err) {
-      console.error(`  [${dateCode}] Error: ${err.message}`);
+  try {
+    const shows = await checkVenueForDate(dateCode);
+    if (shows.length > 0) {
+      console.log(`  [${dateCode}] Found ${shows.length} IMAX show(s)!`);
+    } else {
+      console.log(`  [${dateCode}] No IMAX shows`);
     }
-
-    // Small delay between requests to be polite
-    await new Promise(r => setTimeout(r, 500));
+    return shows;
+  } catch (err) {
+    console.error(`  [${dateCode}] Error: ${err.message}`);
+    return [];
   }
-
-  return allShows;
 }
 
 module.exports = { checkAllDates };

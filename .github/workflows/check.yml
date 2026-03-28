@@ -7,6 +7,7 @@ on:
 
 permissions:
   contents: write             # Needed to commit state.json back
+  actions: write              # Needed to disable workflow after notifying
 
 jobs:
   check:
@@ -27,6 +28,8 @@ jobs:
       - name: Run IMAX check
         env:
           GMAIL_APP_PASSWORD_GET_GUNEET: ${{ secrets.GMAIL_APP_PASSWORD_GET_GUNEET }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
         run: node src/index.js
 
       - name: Commit state if changed

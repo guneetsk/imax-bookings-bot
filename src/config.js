@@ -35,8 +35,8 @@ module.exports = {
     appPassword: process.env.GMAIL_APP_PASSWORD_GET_GUNEET,
   },
 
-  // How many days ahead to check
-  daysToCheck: 7,
+  // Only check this specific date (YYYYMMDD)
+  targetDate: '20260330',
 
   // State file to track already-notified shows
   stateFile: require('path').join(__dirname, '..', 'state.json'),
